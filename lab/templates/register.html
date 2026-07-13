@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab Anti-Bot - Form di registrazione (test)</title>
+  <!-- reCAPTCHA v2 (test key: sempre valido, mostra banner "for testing only") -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <!-- FingerprintJS + Botd (open source, CDN openfpcdn.io) -->
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    label { display:block; margin:.6rem 0 .2rem; font-weight:600; }
+    input { width:100%; padding:.5rem; box-sizing:border-box; }
+    /* Honeypot: nascosto agli umani, visibile agli scraper che compilano tutto */
+    .hp { position:absolute; left:-9999px; height:0; overflow:hidden; }
+    button { margin-top:1rem; padding:.6rem 1.2rem; font-size:1rem; cursor:pointer; }
+    pre { background:#111; color:#0f0; padding:1rem; overflow:auto; border-radius:6px; }
+    .banner { background:#fff3cd; border:1px solid #ffe69c; padding:.6rem; border-radius:6px; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Registrazione (lab di ricerca)</h1>
+  <p class="banner">⚠️ Ambiente di test locale. Nessun account viene creato realmente.
+     reCAPTCHA usa le <em>test key</em> di Google (sempre valide).</p>
+
+  <form id="regform">
+    <label>Email</label>
+    <input type="email" name="email" value="ricercatore@example.test" required>
+
+    <label>Password</label>
+    <input type="password" name="password" value="Password123!" required>
+
+    <!-- Honeypot: un umano non lo vede, quindi resta vuoto -->
+    <div class="hp" aria-hidden="true">
+      <label>Website</label>
+      <input type="text" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
+    <input type="hidden" name="fingerprint" id="fingerprint">
+    <input type="hidden" name="elapsed_ms" id="elapsed_ms">
+
+    <div class="g-recaptcha" data-sitekey="{{ site_key }}" style="margin-top:1rem;"></div>
+
+    <button type="submit">Registrati</button>
+  </form>
+
+  <h3>Risposta del server</h3>
+  <pre id="output">— invia il form per vedere il verdetto —</pre>
+
+  <script type="module">
+    // Timestamp di caricamento pagina, per misurare il tempo di compilazione
+    const pageLoaded = Date.now();
+
+    // Carica FingerprintJS e Botd (open source)
+    let fpAgent = null, botdAgent = null;
+    try {
+      const FP = await import('https://openfpcdn.io/fingerprintjs/v4');
+      fpAgent = await FP.load();
+    } catch (e) { console.warn('FingerprintJS non caricato', e); }
+    try {
+      const Botd = await import('https://openfpcdn.io/botd/v1');
+      botdAgent = await Botd.load();
+    } catch (e) { console.warn('Botd non caricato', e); }
+
+    async function collectFingerprint() {
+      const data = {
+        webdriver: navigator.webdriver === true,
+        userAgentJS: navigator.userAgent,
+        languages: navigator.languages,
+        platform: navigator.platform,
+      };
+      try {
+        if (fpAgent) {
+          const r = await fpAgent.get();
+          data.visitorId = r.visitorId;
+          data.confidence = r.confidence?.score;
+        }
+        if (botdAgent) {
+          const b = await botdAgent.detect();
+          data.botd = { bot: b.bot, botKind: b.botKind };
+        }
+      } catch (e) { console.warn(e); }
+      return data;
+    }
+
+    document.getElementById('regform').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const fp = await collectFingerprint();
+      document.getElementById('fingerprint').value = JSON.stringify(fp);
+      document.getElementById('elapsed_ms').value = String(Date.now() - pageLoaded);
+
+      const form = ev.target;
+      const body = new URLSearchParams(new FormData(form));
+      // grecaptcha inserisce automaticamente g-recaptcha-response nel form
+      const resp = await fetch('/register', { method: 'POST', body });
+      const json = await resp.json();
+      document.getElementById('output').textContent =
+        `HTTP ${resp.status}\n\n` + JSON.stringify(json, null, 2);
+    });
+  </script>
+</body>
+</html>
