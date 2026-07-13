@@ -87,26 +87,58 @@ la protezione robusta — neutralizzare un segnale non sblocca il flusso finché
 gli altri restano attivi — ed è il motivo per cui un `403` su questi sistemi non
 si spiega con "un header mancante".
 
-## 6. Limiti del lab e livelli non coperti
+## 6. Fingerprint TLS (JA3) — livello sotto l'HTTP
 
-- **TLS/HTTP fingerprint (JA3/JA4):** questo lab lavora a livello applicativo.
-  A livello TLS un client come `requests` resta distinguibile da Chrome a
-  prescindere dagli header. Estensione naturale: reverse proxy che ispeziona la
-  firma TLS.
+Prima ancora del livello applicativo, un sistema anti-bot può classificare il
+client dal **ClientHello TLS**. La firma JA3 è costruita da versione, cipher
+suite, estensioni, gruppi di curve e formati dei punti: dipende dalla **libreria
+TLS** (OpenSSL vs BoringSSL) e dalla sua configurazione, e **non cambia
+modificando gli header HTTP**. Lo script `tls_fingerprint.py` cattura il
+ClientHello di ogni client su un server locale e ne calcola il JA3.
+
+| Client | Libreria TLS | JA3 hash |
+|---|---|---|
+| Python `ssl` (~`requests`) | OpenSSL 3.0.13 | `8a9d5d0f12f7d43ee3af1c51d2998d99` |
+| `curl` | OpenSSL 3.0.13 | `78f0dc5ac5b19daf131a133cfdee9691` |
+| Chromium headless | BoringSSL | `ddb4b3952ec8c457cb65f2b41b81b418` |
+
+**Osservazioni:**
+
+- **Tre firme distinte su tre client.** A parità di header HTTP (o addirittura
+  con lo stesso User-Agent falsificato), il JA3 li separa comunque.
+- **Il browser è marcatamente diverso.** Chromium usa un set di cipher compatto
+  in ordine BoringSSL (`4865-4866-4867-49195…`), estensioni **GREASE** (es.
+  `43690`) e gruppi di curve tipici (`4588-29-23-24`). `requests` e `curl`,
+  pur usando entrambi OpenSSL, differiscono tra loro per configurazione: la lista
+  cipher di `curl` è più lunga e in ordine diverso.
+- **Conseguenza per la detection:** un filtro TLS-fingerprint può respingere
+  `requests`/`curl` **prima** di leggere un solo header o valutare il captcha.
+  È il livello che spiega perché "sistemare gli header" non rende un client HTTP
+  indistinguibile da un browser: la differenza è già nel ClientHello.
+
+> Nota metodologica: JA3 (MD5) è ancora il riferimento diffuso; **JA4** è
+> l'evoluzione più recente e robusta. Il principio — la firma dell'handshake
+> tradisce la libreria TLS — è identico.
+
+## 7. Limiti del lab e livelli non coperti
+
 - **Reputazione del token captcha:** con le test key l'esito è sempre valido; in
   produzione reCAPTCHA lega il token a origin/sessione e ne pesa la reputazione
   (in v3/Enterprise con uno *score* 0–1).
 - **Segnali server-side/di rete:** reputazione IP/ASN, rate limiting, coerenza
   di sessione e binding del JWT non sono modellati qui.
 
-## 7. Conclusioni
+## 8. Conclusioni
 
 La detection efficace non dipende da un header segreto, ma dalla **convergenza
-di segnali su più livelli**: header HTTP, esecuzione di JavaScript e fingerprint,
-comportamento (timing/honeypot), esito e reputazione del captcha, e — fuori dal
-perimetro di questo lab — fingerprint TLS e reputazione di rete. Un `403 Forbidden`
-è la manifestazione corretta di questa difesa in profondità quando il punteggio
-aggregato supera la soglia.
+di segnali su più livelli**: fingerprint TLS (JA3) già nel ClientHello, header
+HTTP, esecuzione di JavaScript e fingerprint del browser, comportamento
+(timing/honeypot), esito e reputazione del captcha, e — fuori dal perimetro di
+questo lab — reputazione IP/ASN e binding di sessione. I dati mostrano che i
+livelli sono **indipendenti**: rifinire gli header (sez. 5.1) non tocca il JA3
+(sez. 6), e usare un browser vero per risolvere il fingerprint introduce altri
+segnali (sez. 5.2). Un `403 Forbidden` è la manifestazione corretta di questa
+difesa in profondità quando il punteggio aggregato supera la soglia.
 
 ---
 
@@ -139,4 +171,5 @@ cd lab
 pip install -r requirements.txt
 python app.py                 # terminale 1
 python automation_test.py     # terminale 2  → genera i dati della sezione 4
+python tls_fingerprint.py     # genera i JA3 della sezione 6 (nessun server da avviare)
 ```

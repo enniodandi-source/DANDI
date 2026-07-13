@@ -17,6 +17,8 @@ protezione di un sistema di produzione.
 | `detector.py` | Motore di **scoring aggregato**: assegna un rischio a ogni segnale |
 | `templates/register.html` | Form con reCAPTCHA v2 (test key) + FingerprintJS + Botd |
 | `automation_test.py` | Sonda il server con profili diversi e mostra come cambia il rischio |
+| `tls_fingerprint.py` | Cattura il ClientHello e calcola il **JA3** di `requests`/`curl`/Chromium |
+| `REPORT.md` | Report di ricerca con i dati sperimentali (HTTP + TLS) |
 
 ## reCAPTCHA: test key ufficiali
 
