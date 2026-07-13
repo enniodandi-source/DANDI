@@ -1,0 +1,29 @@
+{
+  "central_system": {
+    "email": "ticketing@company.com",
+    "smtp_host": "smtp.company.com",
+    "smtp_port": 587,
+    "smtp_user": "ticketing@company.com",
+    "smtp_password": "your_smtp_password"
+  },
+  "accounts": [
+    {
+      "email": "test_account_1@provider.com",
+      "password": "test_password_1",
+      "imap_host": "imap.provider.com",
+      "imap_port": 993
+    },
+    {
+      "email": "test_account_2@provider.com",
+      "password": "test_password_2",
+      "imap_host": "imap.provider.com",
+      "imap_port": 993
+    },
+    {
+      "email": "test_account_3@provider.com",
+      "password": "test_password_3",
+      "imap_host": "imap.provider.com",
+      "imap_port": 993
+    }
+  ]
+}

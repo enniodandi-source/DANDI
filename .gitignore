@@ -1,0 +1,41 @@
+# Credenziali e configurazione
+config.json
+config.*.json
+*.env
+.env
+.env.local
+
+# File di stato (con dati sensibili)
+state.json
+*.db
+*.sqlite
+
+# Log
+*.log
+logs/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup
+*.bak
+*.backup
+*~
