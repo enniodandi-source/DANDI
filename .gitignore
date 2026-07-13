@@ -5,8 +5,10 @@ config.*.json
 .env
 .env.local
 
-# File di stato (con dati sensibili)
+# File di stato / risultati (con dati sensibili)
 state.json
+results.json
+results.json.tmp
 *.db
 *.sqlite
 
