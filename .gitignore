@@ -39,3 +39,6 @@ Thumbs.db
 *.bak
 *.backup
 *~
+
+# Profilo IMAP Viewer (contiene la password)
+imap_viewer/config/imap_config.txt

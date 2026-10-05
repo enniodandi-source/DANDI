@@ -1,0 +1,43 @@
+# ============================================================
+#  IMAP Viewer - profilo di configurazione
+#  Copia questo file come "imap_config.txt" (stessa cartella)
+#  e compila i campi. Le righe che iniziano con # sono commenti.
+# ============================================================
+
+[imap]
+# Server IMAP (Gmail: imap.gmail.com, Outlook: outlook.office365.com)
+host = imap.gmail.com
+# Porta: 993 con SSL (consigliata), 143 senza SSL
+port = 993
+# yes = connessione SSL/TLS, no = connessione in chiaro
+ssl = yes
+# Indirizzo email completo
+user = tuo.indirizzo@gmail.com
+# Password. Per Gmail serve una "Password per le app"
+# (Account Google > Sicurezza > Verifica in due passaggi > Password per le app)
+password = la-tua-app-password
+# Cartella da leggere (INBOX = Posta in arrivo)
+folder = INBOX
+
+[filtri]
+# Mostra solo le email il cui mittente contiene questo testo (vuoto = tutte)
+# Esempio per le email di TicketOne: ticketone
+from_contains =
+# Mostra solo le email il cui oggetto contiene questo testo (vuoto = tutte)
+subject_contains =
+# Considera solo le email degli ultimi N giorni
+days_back = 3
+# Quante email mostrare al massimo
+max_messages = 10
+
+[visualizzazione]
+# Quanti caratteri del testo mostrare per ogni email
+preview_chars = 800
+# yes = mostra i link trovati nel testo dell'email
+show_links = yes
+
+[monitoraggio]
+# yes = resta in ascolto e mostra le nuove email appena arrivano
+watch = yes
+# Ogni quanti secondi controllare la casella
+interval_seconds = 30

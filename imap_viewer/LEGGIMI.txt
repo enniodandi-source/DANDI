@@ -1,0 +1,34 @@
+IMAP VIEWER
+===========
+
+Programma da terminale che legge una casella email via IMAP e mostra
+passo per passo cosa succede (connessione, login, email trovate, link).
+Le email vengono solo lette: non vengono segnate come lette, spostate o cancellate.
+
+REQUISITI
+- Python 3.8 o superiore (https://www.python.org/downloads/)
+  Su Windows, durante l'installazione spunta "Add Python to PATH".
+
+CONFIGURAZIONE
+1. Apri la cartella "config".
+2. Copia "imap_config.example.txt" e rinomina la copia in "imap_config.txt"
+   (se non lo fai, il programma la crea da solo al primo avvio).
+3. Compila host, port, user, password e, se vuoi, i filtri.
+   Per leggere solo le email di TicketOne: from_contains = ticketone
+
+GMAIL
+- Attiva la Verifica in due passaggi sul tuo account Google.
+- Crea una "Password per le app" (Account Google > Sicurezza >
+  Password per le app) e usala come password nel file.
+- Host: imap.gmail.com  Porta: 993  SSL: yes
+
+AVVIO
+- Windows: doppio clic su "avvia.bat"
+- macOS / Linux: ./avvia.sh  (oppure: python3 imap_viewer.py)
+
+Con watch = yes il programma resta in ascolto e mostra le nuove email
+appena arrivano. Ctrl+C per fermarlo.
+
+SICUREZZA
+Il file imap_config.txt contiene la tua password: non condividerlo
+e non caricarlo online.
