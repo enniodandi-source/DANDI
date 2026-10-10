@@ -172,6 +172,8 @@ def write_html(path, query, store, products):
   .price {{ font-size:1.3rem; font-weight:700; }}
   .qty {{ color:var(--ok); font-weight:600; font-size:.9rem; }}
   .sku {{ color:var(--muted); font-size:.8rem; }}
+  @page {{ size:A4; margin:10mm; }}
+  @media print {{ body {{ padding:0; }} .card {{ break-inside:avoid; }} }}
 </style></head><body>
   <h1>{html.escape(query.upper())} &mdash; {html.escape(store['name'])}</h1>
   <p class="sub">{len(available)} articoli disponibili su {len(products)} della collezione</p>
