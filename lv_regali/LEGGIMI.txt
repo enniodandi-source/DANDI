@@ -1,0 +1,31 @@
+REGALI LOUIS VUITTON SOTTO 1.250 EURO
+=====================================
+
+Contenuto della cartella:
+  lv_regali.py         lo script
+  requirements.txt     componenti da installare (Playwright)
+  AVVIA_WINDOWS.bat    avvio con doppio clic su Windows
+  AVVIA_MAC.command    avvio con doppio clic su Mac
+  LEGGIMI.txt          queste istruzioni
+
+Serve Python 3 installato (https://www.python.org/downloads/ - su Windows
+spunta "Add Python to PATH" durante l'installazione).
+
+COME SI USA
+1. Estrai lo zip in una cartella (es. Desktop\lv_regali).
+2. Doppio clic su AVVIA_WINDOWS.bat (Windows) o AVVIA_MAC.command (Mac;
+   se il Mac lo blocca: tasto destro > Apri).
+3. Si apre un browser che naviga da solo su it.louisvuitton.com:
+   non chiuderlo, ci mette qualche minuto.
+4. Alla fine si apre lv_regali.pdf (lo trovi anche nella cartella).
+
+DA TERMINALE (opzioni)
+  python lv_regali.py --max-price 800            soglia diversa
+  python lv_regali.py --categories gioielli      solo alcune categorie
+                      (gioielli, borse, accessori)
+  python lv_regali.py --channel chrome           usa Google Chrome
+  python lv_regali.py --debug                    salva screenshot se non trova nulla
+
+SE NON FUNZIONA
+Copia le ultime righe del terminale (ed eventuali file debug_*.png)
+e mandale a Claude.
